@@ -218,23 +218,20 @@ public class EditorActivity extends AppCompatActivity implements
     public void onDecreasePress(View view) {
 
         ContentValues values = new ContentValues();
-
         String quantityString = mQuantityEditText.getText().toString().trim();
-
-
-        int quantityInt = Integer.parseInt(quantityString);
-
-        --quantityInt;
-
+        if (TextUtils.isEmpty(quantityString)) {
+            quantityString = "0";
+        }
+        quantityInt = Integer.parseInt(quantityString);
+        quantityInt--;
         // make sure quantity doesn't go below 0
         if (quantityInt < 0) {
             quantityInt = 0;
             Toast.makeText(this, "Hold your horses!",
                     Toast.LENGTH_SHORT).show();
         }
+        mQuantityEditText.setText(Integer.toString(quantityInt));
         values.put(ProductEntry.COLUMN_PRODUCT_QUANTITY, quantityInt);
-
-        getContentResolver().update(mCurrentProductUri, values, null, null);
 
     }
 
