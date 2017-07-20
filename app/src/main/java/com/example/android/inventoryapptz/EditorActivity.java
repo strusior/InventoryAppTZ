@@ -21,6 +21,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -43,17 +44,15 @@ public class EditorActivity extends AppCompatActivity implements
     // for image method
     private static final int PICK_IMAGE_REQUEST = 0;
     private static final int SEND_MAIL_REQUEST = 1;
-
-    // for image of the product
-    private ImageView mImageView;
-
-    // for image uri
-    private Uri mUri;
-
     /**
      * Identifier for the product data loader
      */
     private static final int EXISTING_PRODUCT_LOADER = 0;
+    // for image of the product
+    private ImageView mImageView;
+    private int quantityInt;
+    // for image uri
+    private Uri mUri;
 
     /**
      * Content URI for the existing product (null if it's a new product)
@@ -87,7 +86,6 @@ public class EditorActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editor);
 
-
         // Examine the intent that was used to launch this activity,
         // in order to figure out if we're creating a new product or editing an existing one.
         Intent intent = getIntent();
@@ -116,7 +114,6 @@ public class EditorActivity extends AppCompatActivity implements
         mPriceEditText = (EditText) findViewById(R.id.edit_product_price);
         mQuantityEditText = (EditText) findViewById(R.id.edit_product_quantity);
         mImageView = (ImageView) findViewById(R.id.picture);
-
     }
 
     // open gallery
@@ -150,18 +147,8 @@ public class EditorActivity extends AppCompatActivity implements
                 mUri = resultData.getData();
                 Log.i(LOG_TAG, "Uri: " + mUri.toString());
 
-                // mImageView = (ImageView) findViewById(R.id.picture);
-
-                //mTextView.setText(mUri.toString());
                 mImageView.setImageBitmap(getBitmapFromUri(mUri));
 
-                // ContentValues values = new ContentValues();
-
-                //values.put(ProductEntry.COLUMN_PICTURE_URI, mUri.toString());
-
-                //getContentResolver().update(mCurrentProductUri, values, null, null);
-
-                // trzeba zapisać uri jako tekst i baziedanych i potem go wyświetlać. tak jak inne wartości
             }
         } else if (requestCode == SEND_MAIL_REQUEST && resultCode == Activity.RESULT_OK) {
 
@@ -174,9 +161,16 @@ public class EditorActivity extends AppCompatActivity implements
         if (uri == null || uri.toString().isEmpty())
             return null;
 
-        // Get the dimensions of the View
+        // dimens of the image view
         int targetW = mImageView.getWidth();
+        if (mImageView.getWidth() == 0) {
+            targetW = 1;
+        }
         int targetH = mImageView.getHeight();
+        if (mImageView.getHeight() == 0) {
+            targetH = 1;
+        }
+
 
         InputStream input = null;
         try {
@@ -190,6 +184,7 @@ public class EditorActivity extends AppCompatActivity implements
 
             int photoW = bmOptions.outWidth;
             int photoH = bmOptions.outHeight;
+
 
             // Determine how much to scale down the image
             int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
@@ -219,13 +214,13 @@ public class EditorActivity extends AppCompatActivity implements
         }
     }
 
-
     //Setup the decrease quantity button
     public void onDecreasePress(View view) {
 
         ContentValues values = new ContentValues();
 
         String quantityString = mQuantityEditText.getText().toString().trim();
+
 
         int quantityInt = Integer.parseInt(quantityString);
 
@@ -243,20 +238,17 @@ public class EditorActivity extends AppCompatActivity implements
 
     }
 
-    //Setup the increase quantity button
     public void onIncreasePress(View view) {
 
         ContentValues values = new ContentValues();
-
         String quantityString = mQuantityEditText.getText().toString().trim();
-
-        int quantityInt = Integer.parseInt(quantityString);
-
-        ++quantityInt;
-
+        if (TextUtils.isEmpty(quantityString)) {
+            quantityString = "0";
+        }
+        quantityInt = Integer.parseInt(quantityString);
+        quantityInt++;
+        mQuantityEditText.setText(Integer.toString(quantityInt));
         values.put(ProductEntry.COLUMN_PRODUCT_QUANTITY, quantityInt);
-
-        getContentResolver().update(mCurrentProductUri, values, null, null);
 
     }
 
@@ -356,7 +348,6 @@ public class EditorActivity extends AppCompatActivity implements
 
         }
 
-
     }
 
     @Override
@@ -439,7 +430,7 @@ public class EditorActivity extends AppCompatActivity implements
             int gender = cursor.getInt(genderColumnIndex);
             int weight = cursor.getInt(weightColumnIndex);
 
-            String tmp = cursor.getString(uriColumnIndex);
+            final String tmp = cursor.getString(uriColumnIndex);
 
             //https://stackoverflow.com/questions/12298835/how-to-retrieve-data-from-sqlite-database-in-android-and-display-it-in-textview
             // Update the views on the screen with the values from the database
@@ -448,9 +439,16 @@ public class EditorActivity extends AppCompatActivity implements
             mPriceEditText.setText(Integer.toString(weight));
             mQuantityEditText.setText(Integer.toString(gender));
 
-            mImageView.setImageBitmap(getBitmapFromUri(Uri.parse(tmp)));
+            //mImageView.setImageBitmap(getBitmapFromUri(Uri.parse(tmp)));
 
-
+            ViewTreeObserver viewTreeObserver = mImageView.getViewTreeObserver();
+            viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    mImageView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    mImageView.setImageBitmap(getBitmapFromUri(Uri.parse(tmp)));
+                }
+            });
         }
     }
 

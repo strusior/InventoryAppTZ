@@ -65,7 +65,6 @@ public class ProductCursorAdapter extends CursorAdapter {
         int priceColumnIndex = cursor.getColumnIndex(ProductContract.ProductEntry.COLUMN_PRODUCT_PRICE);
         int quantityColumnIndex = cursor.getColumnIndex(ProductContract.ProductEntry.COLUMN_PRODUCT_QUANTITY);
 
-
         Button saleButton = (Button) view.findViewById(R.id.sale_button);
         final int idValue = cursor.getInt(cursor.getColumnIndex(ProductContract.ProductEntry._ID));
 
@@ -78,16 +77,15 @@ public class ProductCursorAdapter extends CursorAdapter {
 
         //int productPrice = cursor.getInt(priceColumnIndex);
 
-      if(TextUtils.isEmpty(Integer.toString(productPrice))){
-          productPrice = 0;}
+        if (TextUtils.isEmpty(Integer.toString(productPrice))) {
+            productPrice = 0;
+        }
 
         // Populate fields with extracted properties
         nameTextView.setText(productName);
-        priceTextView.setText(Integer.toString(productPrice)+" USD");
-        quantityTextView.setText(Integer.toString(productQuantity)+" pcs");
-
+        priceTextView.setText(Integer.toString(productPrice) + " USD");
+        quantityTextView.setText(Integer.toString(productQuantity) + " pcs");
 
     }
-
 
 }

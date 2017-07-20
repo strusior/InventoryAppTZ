@@ -72,7 +72,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,7 +89,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
 
         });
-
 
         // Find the ListView which will be populated with the product data
         ListView productListView = (ListView) findViewById(R.id.list);
@@ -125,7 +123,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         // Kick off the loader
         getLoaderManager().initLoader(PET_LOADER, null, this);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

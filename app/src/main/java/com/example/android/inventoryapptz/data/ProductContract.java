@@ -11,7 +11,8 @@ public final class ProductContract {
 
     // To prevent someone from accidentally instantiating the contract class,
     // give it an empty constructor.
-    private ProductContract() {}
+    private ProductContract() {
+    }
 
     /**
      * The "Content authority" is a name for the entire content provider, similar to the
@@ -41,9 +42,10 @@ public final class ProductContract {
      */
     public static final class ProductEntry implements BaseColumns {
 
-        /** The content URI to access the product data in the provider */
+        /**
+         * The content URI to access the product data in the provider
+         */
         public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, PATH_PRODUCTS);
-
 
         // * The MIME type of the {@link #CONTENT_URI} for a list of product.
 
@@ -51,45 +53,47 @@ public final class ProductContract {
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_PRODUCTS;
 
 
-         //* The MIME type of the {@link #CONTENT_URI}.
+        //* The MIME type of the {@link #CONTENT_URI}.
 
         public static final String CONTENT_ITEM_TYPE =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_PRODUCTS;
 
-        /** Name of database table for products */
+        /**
+         * Name of database table for products
+         */
         public final static String TABLE_NAME = "products";
 
         /**
          * Unique ID number for the product (only for use in the database table).
-         *
+         * <p>
          * Type: INTEGER
          */
         public final static String _ID = BaseColumns._ID;
 
         /**
          * Name of the product.
-         *
+         * <p>
          * Type: TEXT
          */
-        public final static String COLUMN_PRODUCT_NAME ="name";
+        public final static String COLUMN_PRODUCT_NAME = "name";
 
         /**
          * description of the product.
-         *
+         * <p>
          * Type: TEXT
          */
         public final static String COLUMN_PRODUCT_DESCRIPTION = "description";
 
         /**
          * quantity of the product.
-         *
+         * <p>
          * Type: INTEGER
          */
         public final static String COLUMN_PRODUCT_QUANTITY = "quantity";
 
         /**
          * price of the product.
-         *
+         * <p>
          * Type: INTEGER
          */
         public final static String COLUMN_PRODUCT_PRICE = "price";
